@@ -1,6 +1,22 @@
 # REAL-XM-AUTHORITY-001 — matched K surface freeze
 
-Status at creation: **PROSPECTIVE / UNRUN**.
+Current status: **RECORDED / REVIEWED** (2026-08-22).
+
+Recorded result ledger:
+
+`infra/results/REAL_XM_AUTHORITY_001_K_SURFACE_RESULT.md`
+
+Recorded classification:
+
+`REAL_DATA_MATCHED_K_SURFACE_RECORDED`
+
+Result compression:
+
+> Larger K produced no demonstrated growth of a persistent marginal authority topology under the frozen 16-region partition; observed rho dispersion is compatible with the finite-count exchangeable-winner baseline. A suggestive high-K negative association between rho and Q_hold remains a fresh-seed replication target, not an established mechanism.
+
+The prospective protocol below is preserved as frozen pre-run provenance. Its original status at creation was **PROSPECTIVE / UNRUN**.
+
+---
 
 This file freezes the matched competition-pressure surface following the recorded real-data K=2 pilot. It does not modify the scientific/apparatus commit or PR #9.
 
