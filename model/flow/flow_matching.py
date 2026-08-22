@@ -21,11 +21,13 @@ class FlowMatching:
 
         return x_t, u_t
 
-    def training_losses(self, model, x_start, t, model_kwargs=None, noise=None, reduce_loss=True):
+    def training_losses(self, model, x_start, t, model_kwargs=None, noise=None, reduce_loss=True, noise_observer=None):
         if model_kwargs is None:
             model_kwargs = {}
         if noise is None:
             noise = torch.randn_like(x_start, device=x_start.device)
+            if noise_observer is not None:
+                noise_observer(noise)
         x_t, u_t = self.generate_noisy_samples(x_start, t, noise)
         out = model(x_t, t, **model_kwargs)
         diff = out - u_t
