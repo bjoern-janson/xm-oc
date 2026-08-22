@@ -184,7 +184,7 @@ def main():
     p.add_argument("--root", required=True)
     p.add_argument("--output", required=True)
     p.add_argument("--frozen-sha", required=True)
-    p.add_argument("--launcher-sha", required=True)
+    p.add_argument("--execution-bundle-sha", required=True)
     args = p.parse_args()
 
     root = Path(args.root)
@@ -198,7 +198,7 @@ def main():
         "classification": "REAL_DATA_MATCHED_K_SURFACE_RECORDED",
         "claim_ceiling": "single-seed small real-ImageNet-subset matched K surface; descriptive, not universal XM claim",
         "frozen_scientific_apparatus_sha": args.frozen_sha,
-        "launcher_sha": args.launcher_sha,
+        "execution_bundle_sha": args.execution_bundle_sha,
         "k_surface": KS,
         "q_hold_steps": EXPECTED_QHOLD_STEPS,
         "partition_coord_indices": partition_coords[0],
