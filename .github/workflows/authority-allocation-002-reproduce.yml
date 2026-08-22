@@ -1,23 +1,13 @@
 name: AUTHORITY-ALLOCATION-002-REPRODUCE
 
-# Post-open provenance workflow only.
+# Historical post-open provenance workflow.
 # The scientific design/executable were frozen at
 # 753db01c05c1ecdaa4f2c0602a3bacb8c92c695d before confirmatory seeds were opened.
-# This workflow is added only after the frozen block has been executed once.
+# Hosted reproduction completed successfully in workflow run 32582018804.
+# This workflow is intentionally left non-triggering after custody closure.
 
 on:
-  push:
-    branches:
-      - xm-oc/authority-allocation-002
-    paths:
-      - 'experiments/authority_allocation_002/CONFIRMATORY_OPENED'
-      - '.github/workflows/authority-allocation-002-reproduce.yml'
-  pull_request:
-    branches:
-      - xm-oc/authority-allocation-001
-    paths:
-      - 'experiments/authority_allocation_002/CONFIRMATORY_OPENED'
-      - '.github/workflows/authority-allocation-002-reproduce.yml'
+  workflow_dispatch:
 
 jobs:
   reproduce-confirmatory:
