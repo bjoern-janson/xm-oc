@@ -7,6 +7,12 @@ on:
     paths:
       - 'experiments/authority_allocation_003a_calibration/**'
       - '.github/workflows/aa003a-construction-calibration.yml'
+  pull_request:
+    branches:
+      - xm-oc/authority-allocation-002
+    paths:
+      - 'experiments/authority_allocation_003a_calibration/**'
+      - '.github/workflows/aa003a-construction-calibration.yml'
 
 jobs:
   construct-collision:
