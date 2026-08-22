@@ -12,9 +12,7 @@ These files do not modify the frozen observer, training objective, region defini
 
 `REAL_XM_AUTHORITY_001_K2_PILOT_RESULT.md`
 
-Classification:
-
-`REAL_DATA_K2_PILOT_RECORDED`
+Classification: `REAL_DATA_K2_PILOT_RECORDED`.
 
 Narrow result: under the frozen 16-region partition, K=2 did not show the strong toy-style authority-starvation pattern; `A(R)` tracked `C_slot(R)` closely, while Q_hold heterogeneity existed without a low-rho precursor.
 
@@ -22,13 +20,9 @@ Narrow result: under the frozen 16-region partition, K=2 did not show the strong
 
 `REAL_XM_AUTHORITY_001_K_SURFACE_RESULT.md`
 
-Classification:
+Classification: `REAL_DATA_MATCHED_K_SURFACE_RECORDED`.
 
-`REAL_DATA_MATCHED_K_SURFACE_RECORDED`
-
-Matched surface:
-
-`K in {1,2,5,8,12}`
+Matched surface: `K in {1,2,5,8,12}`.
 
 Narrow result: increasing K did not demonstrate monotonic growth of a persistent marginal authority topology. Observed rho dispersion is compatible with the finite-count exchangeable-winner baseline. A suggestive high-K negative association between rho and Q_hold remains open for fresh-seed replication.
 
@@ -44,11 +38,11 @@ High-K authority/competence coupling fresh-seed replication:
 
 `../REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION.md`
 
-Frozen execution bundle:
+Immutable execution bundle used by the launcher:
 
 `4aa246b5ee80c565d1a8da7d41b4eae083361a2b`
 
-Frozen Kaggle launcher:
+Immutable Kaggle launcher:
 
 `cc7d88f91be2dc0b739acebcc92896e4466694cc`
 
@@ -64,17 +58,12 @@ The discovery is frozen as **authority/competence coupling**, not competence-sel
 
 Marginal rho dispersion remains calibrated against the exchangeable-winner finite-count null. A secondary frozen diagnostic tracks whether the same region identities repeatedly occupy low-rho/high-Q positions across fresh seeds.
 
+The launcher audits/hashes each native `last.ckpt` and then deletes it post-training to avoid disk pressure across 15 members. Q_gen is out of scope.
+
 Status: **scientifically unrun**. No fresh-seed result exists yet.
 
 ## Claim ceiling
 
-Current real-data evidence is limited to:
-
-- a deterministic 4096-train / 256-validation ImageNet subset;
-- one discovery training seed per K in the recorded surface;
-- Tesla P100 / `16-mixed` precision;
-- the frozen 16-cell coordinate-sign latent partition;
-- 2049 optimizer steps per K;
-- Q_hold, not Q_gen.
+Current real-data evidence is limited to a deterministic 4096-train / 256-validation ImageNet subset, one discovery training seed per K in the recorded surface, Tesla P100 / `16-mixed` precision, the frozen 16-cell coordinate-sign partition, 2049 optimizer steps per K, and Q_hold rather than Q_gen.
 
 The recorded results do **not** establish a universal property of Explorative Modeling, absence of authority topology under other partitions/regimes, a causal effect of low winner authority on competence, or any performance claim.
