@@ -7,6 +7,12 @@ on:
     paths:
       - 'experiments/authority_allocation_001/**'
       - '.github/workflows/authority-allocation-001.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'experiments/authority_allocation_001/**'
+      - '.github/workflows/authority-allocation-001.yml'
 
 jobs:
   confirmatory:
