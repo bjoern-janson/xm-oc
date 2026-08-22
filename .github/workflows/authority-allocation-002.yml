@@ -1,0 +1,67 @@
+name: AUTHORITY-ALLOCATION-002
+
+on:
+  push:
+    branches:
+      - xm-oc/authority-allocation-002
+    paths:
+      - 'experiments/authority_allocation_002/**'
+      - '.github/workflows/authority-allocation-002.yml'
+  workflow_dispatch:
+
+jobs:
+  self-test:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run structural self-test only
+        run: |
+          python experiments/authority_allocation_002/authority_allocation_002.py \
+            --self-test-only
+
+  confirmatory:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run prospectively frozen confirmatory block
+        run: |
+          python experiments/authority_allocation_002/authority_allocation_002.py \
+            --mode confirmatory \
+            --seed-start 20000 \
+            --num-seeds 256 \
+            --out authority_allocation_002_result.json
+
+      - name: Print frozen surface summary
+        run: |
+          python - <<'PY'
+          import json
+          p = json.load(open('authority_allocation_002_result.json'))
+          print(json.dumps({
+              'experiment_id': p['experiment_id'],
+              'status': p['status'],
+              'seed_start': p['seed_start'],
+              'num_seeds': p['num_seeds'],
+              'primary': p['summary']['primary'],
+              'apparatus': p['summary']['apparatus'],
+              'surface': p['summary']['surface'],
+              'paired_placement': p['summary']['paired_placement'],
+          }, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: authority-allocation-002-result
+          path: authority_allocation_002_result.json
+          if-no-files-found: error
