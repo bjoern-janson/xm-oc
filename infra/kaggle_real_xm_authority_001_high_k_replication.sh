@@ -6,7 +6,7 @@ set -Eeuo pipefail
 # separately pinned at EXECUTION_BUNDLE_SHA.
 
 FROZEN_SHA="be7cefd60cf199e9fbabd6110be1254a1756590e"
-EXECUTION_BUNDLE_SHA="2d246be73d34f074899c0009d6b38c6fe0a1e3f5"
+EXECUTION_BUNDLE_SHA="4aa246b5ee80c565d1a8da7d41b4eae083361a2b"
 REPO_URL="https://github.com/bjoern-janson/xm-oc.git"
 HF_DATASET="ILSVRC/imagenet-1k"
 HF_DATASET_REV="49e2ee26f3810fb5a7536bbf732a7b07389a47b5"
@@ -289,6 +289,13 @@ PY
       "$MEMBER/train.log" \
       "$CKPT" \
       | tee "$MEMBER/custody.sha256"
+
+    # Post-training custody only: checkpoint content is hashed above, then deleted so
+    # disk pressure cannot determine which later preregistered seed blocks complete.
+    printf '%s\n' "$CKPT" > "$MEMBER/deleted-checkpoint-path.txt"
+    rm -f "$CKPT"
+    [[ ! -e "$CKPT" ]] || { echo "FATAL: checkpoint cleanup failed seed=$SEED K=$K" >&2; exit 104; }
+    echo "CHECKPOINT_HASHED_AND_DELETED $SEED $K"
 
     echo "=== seed=$SEED K=$K RECORDED ==="
   done
