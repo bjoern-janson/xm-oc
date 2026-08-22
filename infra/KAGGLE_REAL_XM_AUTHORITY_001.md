@@ -1,6 +1,6 @@
 # Kaggle handoff — REAL-XM-AUTHORITY-001
 
-Current status: **GPU apparatus validated; real-data K=2 pilot and matched K surface recorded/reviewed.**
+Current status: **GPU apparatus validated; real-data K=2 pilot and matched K surface recorded/reviewed; fresh-seed high-K coupling replication prospectively frozen and scientifically unrun.**
 
 This branch is infrastructure / execution custody only. It does **not** modify or replace draft PR #9.
 
@@ -10,45 +10,61 @@ Frozen scientific/apparatus commit:
 
 ## Completed execution lineage
 
-1. Synthetic CUDA smoke validated the frozen observer path on Tesla P100.
-2. Real-ImageNet-subset K=2 pilot was recorded:
-   - `infra/results/REAL_XM_AUTHORITY_001_K2_PILOT_RESULT.md`
-3. Matched real-data surface `K in {1,2,5,8,12}` was recorded:
-   - prospective protocol: `infra/REAL_XM_AUTHORITY_001_K_SURFACE.md`
-   - result ledger: `infra/results/REAL_XM_AUTHORITY_001_K_SURFACE_RESULT.md`
-   - post-hoc finite-count null calibration: `infra/results/real_xm_authority_001_k_surface_null.py`
+1. Synthetic CUDA observer smoke: apparatus validated on Tesla P100.
+2. Real ImageNet-subset K=2 pilot: recorded.
+3. Matched real-data K surface `K={1,2,5,8,12}`: recorded/reviewed.
 
-## Current scientific compression
+Recorded results:
 
-The single-seed matched surface did **not** demonstrate monotonic growth of a persistent marginal authority topology as K increased. Cumulative and windowed rho dispersion was compatible with the finite-count exchangeable-winner baseline.
+- `infra/results/REAL_XM_AUTHORITY_001_K2_PILOT_RESULT.md`
+- `infra/results/REAL_XM_AUTHORITY_001_K_SURFACE_RESULT.md`
+- `infra/results/README.md`
 
-A suggestive high-K negative association between `rho` and `Q_hold` appeared, strongest at K=12 after step 1024. That is a fresh-seed replication target, not an established causal or mechanism claim.
+Current narrow result: larger K did not demonstrate monotonic growth of a persistent marginal authority topology under the frozen 16-region partition; observed rho dispersion is compatible with the exchangeable-winner finite-count baseline. The high-K negative rho/Q_hold association is a replication target, not an established mechanism.
 
-Claim ceiling:
+## Next frozen stage — fresh-seed replication
 
-- small real-ImageNet subset;
-- one training seed;
-- P100 / `16-mixed` execution regime;
-- frozen 16-region coordinate-sign partition;
-- no Q_gen result yet;
-- no universal conclusion about XM.
+Prospective protocol:
 
-## Historical smoke launcher
+`infra/REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION.md`
 
-The original synthetic apparatus smoke remains available for provenance:
+Execution bundle:
+
+`4aa246b5ee80c565d1a8da7d41b4eae083361a2b`
+
+Frozen launcher commit:
+
+`cc7d88f91be2dc0b739acebcc92896e4466694cc`
+
+Replication design:
+
+- fresh training seed blocks `{101,202,303,404,505}`;
+- matched `K={2,8,12}` inside each block;
+- same ImageNet specimen, observer, region map, holdout bank, architecture, optimizer, and 2049-step schedule;
+- primary endpoint: late Fisher-z average of regional `corr(rho,Q_hold)` at steps 1536 and 2048;
+- primary seed-block contrast: `Z_late(K=12)-Z_late(K=2)`;
+- causal direction explicitly unclaimed;
+- marginal rho dispersion calibrated against the fixed finite-count null;
+- secondary region-identity stability diagnostic frozen before fresh seeds are run.
+
+The launcher creates/audits/hashes the native `last.ckpt` for each member and then deletes the checkpoint post-training to keep 15 optimizer-bearing checkpoints from exhausting Kaggle storage. Q_gen is out of scope for this replication.
+
+### One-cell launch
+
+Use the commit-pinned launcher:
 
 ```bash
-!curl -fsSL https://raw.githubusercontent.com/bjoern-janson/xm-oc/infra/kaggle-real-xm-authority-001/infra/kaggle_real_xm_authority_001_smoke.sh | bash
+!curl -fsSL https://raw.githubusercontent.com/bjoern-janson/xm-oc/cc7d88f91be2dc0b739acebcc92896e4466694cc/infra/kaggle_real_xm_authority_001_high_k_replication.sh | bash
 ```
 
-Its output directory is:
+Kaggle settings:
 
-`/kaggle/working/real_xm_authority_001_smoke/output`
+- Internet: ON
+- Accelerator: Tesla P100
+- secret `HF_TOKEN` with accepted ImageNet access
 
-The smoke is apparatus validation only and must not be cited as real-data evidence.
+Expected final marker:
 
-## Next admissible scientific knife
+`=== REAL_DATA_HIGH_K_COUPLING_REPLICATION_RECORDED ===`
 
-Do not modify PR #9, the observer, or the region definition in response to the surface.
-
-If continuing, prospectively freeze a fresh-seed replication focused on `K={2,8,12}` using the same data specimen, horizon, observer, region map, and Q_hold bank. Primary replication object: the sign/magnitude trajectory of `corr(rho,Q_hold)` together with null-calibrated rho dispersion.
+Status: **PROSPECTIVELY FROZEN / SCIENTIFICALLY UNRUN**.
