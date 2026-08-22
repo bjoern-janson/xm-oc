@@ -105,6 +105,14 @@ export XM_AUTHORITY_HOLDOUT_EVERY_N_VAL_STEPS=1
 export HF_HOME="/kaggle/working/hf_cache"
 mkdir -p "$HF_HOME"
 
+# Keep Lightning on the repository's native W&B logger, but force it offline.
+# Passing logger=None (the --no_wandb/debug path) makes Lightning instantiate
+# TensorBoard, which in Kaggle re-imports the incompatible preinstalled TF stack.
+# This is launcher-only logging plumbing; the frozen model/optimizer/XM code is
+# unchanged and no network W&B account/key is required.
+export WANDB_MODE=offline
+export WANDB_SILENT=true
+
 # P100 has no native BF16 support. This is deliberately 32-true because this
 # run is only a CUDA/apparatus witness, not a scientific K-arm result.
 # The upstream-supported image architecture (vit_base, 256px, patch=2,
@@ -149,10 +157,13 @@ python train_model.py \
   --log_every_n_steps 1 \
   --set_matmul_precision "medium" \
   --float_precision "32-true" \
-  --limit_val_batches 0.0001 \
+  --limit_train_batches 1 \
+  --limit_val_batches 1 \
+  --val_sanity 0 \
   --save_top_k_ckpts 0 \
   --checkpoint_base_dir "$OUT_DIR/checkpoints" \
-  --debug_mode \
+  --wandb_project "real-xm-authority-001-smoke" \
+  --wandb_offline \
   2>&1 | tee "$LOG_FILE"
 TRAIN_RC=${PIPESTATUS[0]}
 set -e
