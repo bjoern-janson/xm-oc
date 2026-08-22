@@ -1,0 +1,12 @@
+AUTHORITY-ALLOCATION-002 confirmatory block opened after scientific freeze.
+
+Scientific freeze commit:
+753db01c05c1ecdaa4f2c0602a3bacb8c92c695d
+
+Frozen executable Git blob:
+3c674342ba0cfc9f9ecfdb3bbb6dca5ff38ca40b
+
+Confirmatory seeds:
+20000..20255
+
+This marker exists only to trigger the post-open reproduction workflow.
