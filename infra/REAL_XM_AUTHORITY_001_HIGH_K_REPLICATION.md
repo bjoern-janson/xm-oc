@@ -81,7 +81,9 @@ Training:
 - CFG dropout 0.1; EMA 0.9999; ODE step size 0.02;
 - validation every 512-step epoch;
 - Q_hold at 512, 1024, 1536, 2048;
-- online FID disabled; W&B offline; `last.ckpt` retained.
+- online FID disabled; W&B offline.
+
+The native `last.ckpt` is still created for every member and must pass the same one-checkpoint audit. To prevent 15 optimizer-bearing checkpoints from exhausting Kaggle working storage and thereby selecting later seed blocks, the launcher hashes each `last.ckpt` into the member custody ledger and then deletes that checkpoint **after training and audit**. Checkpoint deletion is post-training custody management only and cannot alter any recorded authority/Q_hold observation. Q_gen is explicitly out of scope for this replication.
 
 ### Fixed numeric seed boundary
 
