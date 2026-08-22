@@ -1,0 +1,52 @@
+name: AUTHORITY-ALLOCATION-001
+
+on:
+  push:
+    branches:
+      - xm-oc/authority-allocation-001
+    paths:
+      - 'experiments/authority_allocation_001/**'
+      - '.github/workflows/authority-allocation-001.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'experiments/authority_allocation_001/**'
+      - '.github/workflows/authority-allocation-001.yml'
+
+jobs:
+  confirmatory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run frozen confirmatory block
+        run: |
+          python experiments/authority_allocation_001/authority_allocation_001.py \
+            --seed-start 10000 \
+            --num-seeds 256 \
+            --out authority_allocation_001_result.json
+
+      - name: Print frozen summary
+        run: |
+          python - <<'PY'
+          import json
+          p = json.load(open('authority_allocation_001_result.json'))
+          print(json.dumps({
+              'experiment_id': p['experiment_id'],
+              'classification': p['classification'],
+              'seed_start': p['seed_start'],
+              'num_seeds': p['num_seeds'],
+              'summary': p['summary'],
+          }, indent=2, sort_keys=True))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: authority-allocation-001-result
+          path: authority_allocation_001_result.json
+          if-no-files-found: error
