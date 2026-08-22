@@ -1,0 +1,39 @@
+name: AA-003a construction calibration
+
+on:
+  push:
+    branches:
+      - xm-oc/authority-allocation-003a-calibration
+    paths:
+      - 'experiments/authority_allocation_003a_calibration/**'
+      - '.github/workflows/aa003a-construction-calibration.yml'
+  pull_request:
+    branches:
+      - xm-oc/authority-allocation-002
+    paths:
+      - 'experiments/authority_allocation_003a_calibration/**'
+      - '.github/workflows/aa003a-construction-calibration.yml'
+
+jobs:
+  construct-collision:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Search exact developmental collision
+        run: |
+          python experiments/authority_allocation_003a_calibration/aa003a_construct_collision.py \
+            --out aa003a_construction_calibration.json
+
+      - name: Print construction result
+        run: cat aa003a_construction_calibration.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aa003a-construction-calibration
+          path: aa003a_construction_calibration.json
+          if-no-files-found: error
