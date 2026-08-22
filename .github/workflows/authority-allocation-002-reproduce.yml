@@ -11,6 +11,13 @@ on:
       - xm-oc/authority-allocation-002
     paths:
       - 'experiments/authority_allocation_002/CONFIRMATORY_OPENED'
+      - '.github/workflows/authority-allocation-002-reproduce.yml'
+  pull_request:
+    branches:
+      - xm-oc/authority-allocation-001
+    paths:
+      - 'experiments/authority_allocation_002/CONFIRMATORY_OPENED'
+      - '.github/workflows/authority-allocation-002-reproduce.yml'
 
 jobs:
   reproduce-confirmatory:
