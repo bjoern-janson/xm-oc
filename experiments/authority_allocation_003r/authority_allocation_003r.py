@@ -40,8 +40,18 @@ EXPECTED_LOSS_T = Fraction(5541164721, 10000000000)
 EXPECTED_U_PRE = Fraction(25561, 100000)
 
 
-def frac(x: Fraction) -> str:
-    return f"{x.numerator}/{x.denominator}"
+def int_hex(x: int) -> str:
+    """Exact integer serialization using a base exempt from decimal digit limits."""
+    sign = "-" if x < 0 else ""
+    return f"{sign}0x{abs(x):x}"
+
+
+def frac(x: Fraction) -> dict[str, str]:
+    """Overflow-safe exact rational audit representation."""
+    return {
+        "numerator_hex": int_hex(x.numerator),
+        "denominator_hex": int_hex(x.denominator),
+    }
 
 
 def developmental_run(
