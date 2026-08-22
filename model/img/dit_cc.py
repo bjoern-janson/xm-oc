@@ -55,6 +55,13 @@ class DiT_IMG_CC(L.LightningModule):
             from model.flow.ot_coupling import OTPlanSampler
             self.ot_sampler = OTPlanSampler(method="exact")
 
+        self.authority_observer = None
+        from experiments.real_xm_authority_001.authority_observer import AuthorityTopologyObserver
+        self.authority_observer = AuthorityTopologyObserver.from_env()
+        if self.authority_observer is not None:
+            assert self.hparams.diffusion_supervision_type == 'velocity', "REAL-XM-AUTH-001 is scoped to continuous velocity/flow matching"
+            assert not self.hparams.use_ot_flow, "REAL-XM-AUTH-001 does not instrument the OT-CFM baseline"
+
         self.reset_image_encoder_decoder = False
         self.finished_warming_up = False
 
@@ -91,6 +98,37 @@ class DiT_IMG_CC(L.LightningModule):
             terms = self.diffusion.training_losses(model_forward, gt_samples, conditions[0], model_kwargs, noise=rand_inputs, reduce_loss=False)
             return terms['loss'], None # return tuple here since thats what xm_chunked_best_of_k expects
 
+    def _measure_authority_q_hold(self, image_embeddings, class_labels):
+        observer = self.authority_observer
+        if observer is None:
+            return
+        step = int(self.trainer.global_step)
+        if not observer.should_measure_holdout(step):
+            return
+
+        n = min(observer.holdout_examples, image_embeddings.shape[0])
+        if n <= 0:
+            return
+        gt = image_embeddings[:n]
+        labels = class_labels[:n]
+        t_hold = observer.holdout_times(count=n, device=gt.device)
+
+        region_losses = []
+        with torch.no_grad():
+            for region in range(observer.num_regions):
+                noise = observer.conditioned_noise(reference=gt, region=region, count=n)
+                losses, _ = self.loss_calc_wrapper(
+                    self.forward,
+                    (t_hold, labels),
+                    gt,
+                    learning=False,
+                    rand_inputs=noise,
+                    rand_seeds=None,
+                    cfg_drop_mask=None,
+                )
+                region_losses.append(losses.detach().mean().item())
+        observer.record_q_hold(step=step, region_losses=region_losses)
+
     
     def forward_loss_wrapper(self, x, phase="train"):
         class_labels = x['label']
@@ -109,7 +147,20 @@ class DiT_IMG_CC(L.LightningModule):
                 noise = torch.randn_like(image_embeddings)
                 noise, image_embeddings, class_labels = self.ot_sampler.sample_plan_with_labels(noise, image_embeddings, y1=class_labels)
             model_kwargs = dict(y=class_labels, learning=learning)
-            log_dict = self.diffusion.training_losses(self.forward, image_embeddings, t, model_kwargs, noise=noise)
+
+            if learning and self.authority_observer is not None:
+                step = int(self.trainer.global_step)
+                noise_observer = lambda sampled_noise: self.authority_observer.observe_k1_noise(noise=sampled_noise, step=step)
+                log_dict = self.diffusion.training_losses(
+                    self.forward,
+                    image_embeddings,
+                    t,
+                    model_kwargs,
+                    noise=noise,
+                    noise_observer=noise_observer,
+                )
+            else:
+                log_dict = self.diffusion.training_losses(self.forward, image_embeddings, t, model_kwargs, noise=noise)
 
             key_map = {"vb": "vb_loss", "mse": "score_pred_loss"}
             log_dict = {key_map.get(k, k): (v.mean().detach() if k != 'loss' else v.mean()) for k, v in log_dict.items()} # detach all non loss keys
@@ -121,8 +172,51 @@ class DiT_IMG_CC(L.LightningModule):
                 cfg_drop_mask = torch.rand(image_embeddings.shape[0], device=self.device) < self.cfg_dropout_prob
 
             conditions = (t, class_labels)
-            loss, __ = xm_chunked_best_of_k(self.forward, self.loss_calc_wrapper, conditions, image_embeddings, self.hparams.xm_best_of_k, self.hparams.xm_chunk_bs_mult, save_mem_mode=self.hparams.xm_save_mem_mode, debug_save_mem_mode=self.hparams.xm_debug_mode, not_training=not learning, cfg_drop_mask=cfg_drop_mask)
+            loss_wrapper = self.loss_calc_wrapper
+            observe_training = learning and self.authority_observer is not None
+            if observe_training:
+                self.authority_observer.begin_xm_batch(
+                    batch_size=image_embeddings.shape[0],
+                    best_of_k=self.hparams.xm_best_of_k,
+                    step=int(self.trainer.global_step),
+                )
+
+                def observed_loss_wrapper(model_forward, conditions, gt_samples, learning=True, rand_inputs=None, rand_seeds=None, **kwargs):
+                    losses, predictions = self.loss_calc_wrapper(
+                        model_forward,
+                        conditions,
+                        gt_samples,
+                        learning=learning,
+                        rand_inputs=rand_inputs,
+                        rand_seeds=rand_seeds,
+                        **kwargs,
+                    )
+                    self.authority_observer.observe_xm_call(
+                        rand_inputs=rand_inputs,
+                        losses=losses,
+                    )
+                    return losses, predictions
+
+                loss_wrapper = observed_loss_wrapper
+
+            loss, __ = xm_chunked_best_of_k(
+                self.forward,
+                loss_wrapper,
+                conditions,
+                image_embeddings,
+                self.hparams.xm_best_of_k,
+                self.hparams.xm_chunk_bs_mult,
+                save_mem_mode=self.hparams.xm_save_mem_mode,
+                debug_save_mem_mode=self.hparams.xm_debug_mode,
+                not_training=not learning,
+                cfg_drop_mask=cfg_drop_mask,
+            )
+            if observe_training:
+                self.authority_observer.finish_xm_batch()
             log_dict = {"loss": loss.mean()}
+
+        if phase == "valid" and self.authority_observer is not None:
+            self._measure_authority_q_hold(image_embeddings, class_labels)
 
         def generate_fn():
             z = torch.randn_like(image_embeddings[0].unsqueeze(0))
