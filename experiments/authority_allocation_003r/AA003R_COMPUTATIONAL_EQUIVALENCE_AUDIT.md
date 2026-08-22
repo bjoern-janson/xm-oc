@@ -4,7 +4,7 @@
 
 `EQUIVALENCE_AUDIT_PASS`
 
-**Recovery remains unopened. No `--execute` invocation was performed during this audit.**
+**Recovery was unopened at audit time. No `--execute` invocation was performed during this audit.**
 
 ## Compared revisions
 
@@ -169,4 +169,4 @@ and:
 }
 \]
 
-The computational-equivalence repair is therefore admissible for prospective execution, but **has not been executed**.
+The computational-equivalence repair was therefore admissible for prospective execution.
