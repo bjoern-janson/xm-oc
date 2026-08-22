@@ -137,9 +137,22 @@ def future_contract() -> dict[str, object]:
     }
 
 
+def exact_state(*, d: int, a: Fraction, b: Fraction, target: Fraction) -> dict[str, object]:
+    """Raw exact state for bounded audit; serialization occurs only after termination."""
+    theta = a * b
+    return {
+        "d": d,
+        "a": a,
+        "b": b,
+        "theta": theta,
+        "abs_error": abs(theta - target),
+    }
+
+
 def run_frozen_future(
     *, a_t: Fraction, b_t: Fraction, contract: dict[str, object]
 ) -> dict[str, object]:
+    """Exact first-hit evaluator for the frozen recovery-latency functional."""
     a = a_t
     b = b_t
     target = contract["target"]
@@ -157,10 +170,8 @@ def run_frozen_future(
     assert (mask_a, mask_b) == BOTH
     assert contract["proposal_stream"] == ()
 
-    recovery_latency: int | None = None
-    trace: list[dict[str, object]] = []
-
     for d in range(1, steps + 1):
+        pre_hit_state = exact_state(d=d - 1, a=a, b=b, target=target)
         theta = a * b
         error = theta - target
         grad_a = 2 * error * b
@@ -168,31 +179,20 @@ def run_frozen_future(
 
         a = a - eta * mask_a * grad_a
         b = b - eta * mask_b * grad_b
-        theta = a * b
-        abs_error = abs(theta - target)
+        hit_state = exact_state(d=d, a=a, b=b, target=target)
 
-        if recovery_latency is None and abs_error <= tol:
-            recovery_latency = d
-
-        trace.append(
-            {
-                "d": d,
-                "a": frac(a),
-                "b": frac(b),
-                "theta": frac(theta),
-                "abs_error": frac(abs_error),
+        if hit_state["abs_error"] <= tol:
+            return {
+                "recovery_latency": d,
+                "recovered_by_horizon": True,
+                "pre_hit_state": pre_hit_state,
+                "hit_state": hit_state,
             }
-        )
 
     return {
-        "recovery_latency": (
-            recovery_latency if recovery_latency is not None else CENSORED_LATENCY
-        ),
-        "recovered_by_horizon": recovery_latency is not None,
-        "a_final": a,
-        "b_final": b,
-        "theta_final": a * b,
-        "trace": trace,
+        "recovery_latency": CENSORED_LATENCY,
+        "recovered_by_horizon": False,
+        "final_state": exact_state(d=steps, a=a, b=b, target=target),
     }
 
 
@@ -219,15 +219,27 @@ def serialize_contract(contract: dict[str, object]) -> dict[str, object]:
     }
 
 
-def serialize_future(record: dict[str, object]) -> dict[str, object]:
+def serialize_state(record: dict[str, object]) -> dict[str, object]:
     return {
+        "d": record["d"],
+        "a": frac(record["a"]),
+        "b": frac(record["b"]),
+        "theta": frac(record["theta"]),
+        "abs_error": frac(record["abs_error"]),
+    }
+
+
+def serialize_future(record: dict[str, object]) -> dict[str, object]:
+    serialized: dict[str, object] = {
         "recovery_latency": record["recovery_latency"],
         "recovered_by_horizon": record["recovered_by_horizon"],
-        "a_final": frac(record["a_final"]),
-        "b_final": frac(record["b_final"]),
-        "theta_final": frac(record["theta_final"]),
-        "trace": record["trace"],
     }
+    if record["recovered_by_horizon"]:
+        serialized["pre_hit_state"] = serialize_state(record["pre_hit_state"])
+        serialized["hit_state"] = serialize_state(record["hit_state"])
+    else:
+        serialized["final_state"] = serialize_state(record["final_state"])
+    return serialized
 
 
 def main() -> None:
