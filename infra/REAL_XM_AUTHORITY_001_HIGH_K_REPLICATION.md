@@ -151,7 +151,7 @@ To preserve the common-cause alternative, define for each K and seed:
 
 With deterministic region-index tie breaking, record the four lowest-rho regions, four highest-Q regions, and their intersection. Across seeds report membership frequencies plus pairwise cross-seed Spearman correlations for the 16-region `rho_late` vectors and separately for `Q_late`.
 
-Stable region identities are consistent with a persistent region property/common cause; moving identities with reproducible within-run coupling are more suggestive of a dynamic relation. Neither identifies direction.
+Stable region identities are consistent with a persistent region property/common cause; moving region identities with reproducible within-run coupling are more suggestive of a dynamic relation. Neither identifies direction.
 
 ## Interpretation ceiling
 
