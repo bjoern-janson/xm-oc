@@ -1,6 +1,8 @@
 # REAL-XM-AUTHORITY-001 — high-K authority/competence coupling replication
 
-Status at freeze: **PROSPECTIVE / UNRUN**.
+Status: **PROSPECTIVE / UNRUN AFTER INFRASTRUCTURE RECOVERY**.
+
+Attempt 1 is preserved in `infra/results/REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_ATTEMPT1_INFRA_FAILURE.md`. It failed during the first epoch-end checkpoint write for seed 101 / K=2, before any preregistered late endpoint or seed-block contrast was available. No result from that attempt is replication evidence.
 
 This protocol follows the recorded matched K surface in `infra/results/REAL_XM_AUTHORITY_001_K_SURFACE_RESULT.md`. It does not modify the frozen observer, region definition, training objective, or PR #9.
 
@@ -83,7 +85,15 @@ Training:
 - Q_hold at 512, 1024, 1536, 2048;
 - online FID disabled; W&B offline.
 
-The native `last.ckpt` is still created for every member and must pass the same one-checkpoint audit. To prevent 15 optimizer-bearing checkpoints from exhausting Kaggle working storage and thereby selecting later seed blocks, the launcher hashes each `last.ckpt` into the member custody ledger and then deletes that checkpoint **after training and audit**. Checkpoint deletion is post-training custody management only and cannot alter any recorded authority/Q_hold observation. Q_gen is explicitly out of scope for this replication.
+### Checkpoint-write recovery boundary
+
+Attempt 1 showed that frozen `train_model.py` constructs `ModelCheckpoint(... save_last=True ...)` even with `--save_top_k_ckpts 0`, and the first epoch-end `last.ckpt` exhausted Kaggle working storage before the run could continue.
+
+Checkpoints are **not measurement-bearing artifacts** for this replication: every declared endpoint comes from the frozen observer JSONL, and Q_gen is explicitly out of scope. Therefore the recovered external harness requires `--save_top_k_ckpts 0` and forces only the callback constructor's `save_last` argument to `False`. It retains the native Lightning callback object/hooks but suppresses checkpoint file I/O.
+
+The harness must print `REPLICATION_CHECKPOINT_WRITES_DISABLED`, and the launcher must fail if any `.ckpt` file is produced.
+
+This is an infrastructure/storage recovery. It does not alter model parameters, forward passes, candidate generation, winner selection, replay, optimizer steps, gradients, observer measurements, validation losses, data order, or any preregistered endpoint. The fresh seed set, K set, schedule, and primary contrast remain unchanged.
 
 ### Fixed numeric seed boundary
 
