@@ -61,17 +61,36 @@ printf '%s\n' "$ACTUAL_SHA" | tee "$OUT_DIR/frozen-sha.txt"
 cd "$REPO_DIR"
 python -m pip install -q --no-cache-dir -r requirements.txt
 
+# Kaggle preinstalls TensorFlow. The frozen XM requirements pin protobuf 5.28.1,
+# while Kaggle's TensorFlow wheel was generated against protobuf 5.28.3. XM is
+# PyTorch-only here, so disable the unused TensorFlow backend instead of changing
+# either the frozen repository requirements or the Kaggle TensorFlow/protobuf pair.
+export USE_TORCH=1
+export USE_TF=0
+export TRANSFORMERS_NO_TF=1
+
 python - <<'PY' | tee "$OUT_DIR/environment-audit.txt"
+import os
 import torch, torchvision, pytorch_lightning
 print("torch", torch.__version__)
 print("torchvision", torchvision.__version__)
 print("pytorch_lightning", pytorch_lightning.__version__)
 print("cuda", torch.version.cuda)
 print("cuda_available", torch.cuda.is_available())
+print("USE_TORCH", os.environ.get("USE_TORCH"))
+print("USE_TF", os.environ.get("USE_TF"))
+print("TRANSFORMERS_NO_TF", os.environ.get("TRANSFORMERS_NO_TF"))
 assert torch.cuda.is_available()
 print("device", torch.cuda.get_device_name(0))
 y = torch.randn(8, device="cuda")
 print("cuda_post_requirements_witness", float(y.square().mean().cpu()))
+PY
+
+# Preflight the exact import chain that failed in the first Kaggle attempt.
+python - <<'PY' | tee "$OUT_DIR/hf-import-preflight.txt"
+from diffusers import AutoencoderKL
+from transformers import PreTrainedModel
+print("HF_PYTORCH_IMPORT_PREFLIGHT_PASS")
 PY
 
 python -m pip freeze > "$OUT_DIR/pip-freeze.txt"
