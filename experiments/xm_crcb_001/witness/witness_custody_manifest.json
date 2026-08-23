@@ -5,5 +5,8 @@
   "result_bytes": 3875,
   "result_file": "witness_result.json",
   "result_sha256": "0140e8d77be8e19a4b3ac691a58ce96459643cccdcda62cbaae77e1f282c3714",
-  "schema": "XM-CRCB-001-CALIBRATION-APPARATUS-v1"
+  "schema": "XM-CRCB-001-CALIBRATION-APPARATUS-v1",
+  "trace_bytes": 1991,
+  "trace_file": "witness_trace.json",
+  "trace_sha256": "0d8515f79dc7e5aac053c7678db5ff29f31761d2eb84e380f685f16a3581a501"
 }
