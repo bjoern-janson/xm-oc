@@ -1,0 +1,116 @@
+{
+  "authority_metrics_read": false,
+  "calibration_outcome_observed": false,
+  "cc_protocol_commit": "4d0e87613ef1b894d6ebac2400e358a9fd82e5ae",
+  "claim_ceiling": "witness pass != repair-language adequacy",
+  "classification": "APPARATUS_READY",
+  "factorization_constructed": false,
+  "kind": "synthetic_noop_witness",
+  "null_path": {
+    "delta_exact_zero": true,
+    "pass": true,
+    "repeat_eval_bitwise_equal": true
+  },
+  "parameter_isolation": {
+    "L1": {
+      "frozen_after": "471a30c8869de1de421c036551fadd4f7e2aa6c239971a37098808e69caf172e",
+      "frozen_before": "471a30c8869de1de421c036551fadd4f7e2aa6c239971a37098808e69caf172e",
+      "frozen_unchanged": true,
+      "noise_seed": 1515879050445059545,
+      "selected_changed": true,
+      "time_seed": 6724253223546557437
+    },
+    "L2": {
+      "frozen_after": "ac45dfcbac0591aad1c2a65f34276517637c88a8dc32571b79f8fc32aa1dcbea",
+      "frozen_before": "ac45dfcbac0591aad1c2a65f34276517637c88a8dc32571b79f8fc32aa1dcbea",
+      "frozen_unchanged": true,
+      "noise_seed": 2692859418240086626,
+      "selected_changed": true,
+      "time_seed": 6021417672001938713
+    },
+    "L3": {
+      "frozen_after": "fb78dc287b92dc7e896c7703c88b091049ce6b3cb30a7d9207ad1d694ae36c2c",
+      "frozen_before": "fb78dc287b92dc7e896c7703c88b091049ce6b3cb30a7d9207ad1d694ae36c2c",
+      "frozen_unchanged": true,
+      "noise_seed": 6778891730172406130,
+      "selected_changed": true,
+      "time_seed": 63879325443124813
+    }
+  },
+  "parameter_whitelist": {
+    "L1": {
+      "label": "output_projection_only",
+      "language": "L1",
+      "names": [
+        "diffusion_transformer.final_layer.linear.bias",
+        "diffusion_transformer.final_layer.linear.weight"
+      ],
+      "names_sha256": "264515964afb9a541930b9fe8b2c47b9aac26d66e46b54cc7a801bbc51579cb5",
+      "numel": 69632
+    },
+    "L2": {
+      "label": "full_final_layer",
+      "language": "L2",
+      "names": [
+        "diffusion_transformer.final_layer.adaLN_modulation.1.bias",
+        "diffusion_transformer.final_layer.adaLN_modulation.1.weight",
+        "diffusion_transformer.final_layer.linear.bias",
+        "diffusion_transformer.final_layer.linear.weight"
+      ],
+      "names_sha256": "3f73dc526501cd9480988fd936e8f43461a729ea9cdda50af3e021114bdf5df8",
+      "numel": 70176
+    },
+    "L3": {
+      "label": "final_transformer_block_plus_final_layer",
+      "language": "L3",
+      "names": [
+        "diffusion_transformer.blocks.1.bias",
+        "diffusion_transformer.blocks.1.weight",
+        "diffusion_transformer.final_layer.adaLN_modulation.1.bias",
+        "diffusion_transformer.final_layer.adaLN_modulation.1.weight",
+        "diffusion_transformer.final_layer.linear.bias",
+        "diffusion_transformer.final_layer.linear.weight"
+      ],
+      "names_sha256": "d3a67a3c29a32f7a3cd716f0618cf18c2583db1d657aa6b81ba5ec8077891e39",
+      "numel": 70448
+    }
+  },
+  "real_cache_loaded": false,
+  "real_checkpoint_loaded": false,
+  "rng_isolation": {
+    "different_domain_differs": true,
+    "global_torch_rng_unchanged": true,
+    "pass": true,
+    "same_domain_replay_equal": true
+  },
+  "schema": "XM-CRCB-001-CALIBRATION-APPARATUS-v1",
+  "source_scientific_sha": "be7cefd60cf199e9fbabd6110be1254a1756590e",
+  "synthetic_stop_rule": {
+    "attempted": [
+      "L1",
+      "L2"
+    ],
+    "fixture": {
+      "L1": "LANGUAGE_FAIL",
+      "L2": "LANGUAGE_PASS",
+      "L3": "MUST_NOT_RUN"
+    },
+    "pass": true,
+    "selected": "L2"
+  },
+  "validation_partition": {
+    "construct": [
+      0,
+      63
+    ],
+    "eval": [
+      64,
+      127
+    ],
+    "max_semantic_index_accessed": 127,
+    "science_region_constructor_calls": 0,
+    "science_reserved_access_count": 0
+  },
+  "witness_payload_sha256": "97513fcde3ca6051dbf9961b8c4f77b811b5dae67b8df1e295341ef1dfb0151b",
+  "witness_rerun_bitwise_json_equal": true
+}
