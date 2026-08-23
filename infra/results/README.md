@@ -1,6 +1,6 @@
 # REAL-XM-AUTHORITY-001 results index
 
-This directory contains **post-run result records and diagnostic analyses** for the frozen scientific/apparatus commit:
+This directory contains **post-run result records and diagnostic analyses** for frozen scientific/apparatus commit:
 
 `be7cefd60cf199e9fbabd6110be1254a1756590e`
 
@@ -30,7 +30,7 @@ Narrow result: increasing K did not demonstrate monotonic growth of a persistent
 
 `real_xm_authority_001_k_surface_null.py`
 
-This is a **post-hoc diagnostic**, not preregistered evidence. It calibrates rho dispersion under a region-neutral exchangeable-winner counting null and must not be represented as part of the prospective surface protocol.
+This is a **post-hoc diagnostic**, not preregistered evidence.
 
 ## Replication execution lineage — scientifically unresolved
 
@@ -38,49 +38,55 @@ This is a **post-hoc diagnostic**, not preregistered evidence. It calibrates rho
 
 `REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_ATTEMPT1_INFRA_FAILURE.md`
 
-Classification: infrastructure failure during the first epoch-end checkpoint write for seed 101 / K=2. No preregistered late endpoint or complete seed-block contrast existed.
+Infrastructure failure during the first epoch-end checkpoint write for seed 101 / K=2. No preregistered late endpoint or complete seed-block contrast existed.
 
 ### Recovery v2
 
 `REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_V2_INCOMPLETE.md`
 
-Classification:
+Classification: `REPLICATION_V2_INCOMPLETE`.
 
-`REPLICATION_V2_INCOMPLETE`
+V2 completed and audited 14/15 preregistered members. Only `(seed=505,K=12)` was incomplete. The console log ended during epoch-0 validation of that member without an internal error marker, so interruption cause remains unknown. No four-seed/partial endpoint was opened.
 
-Recovery v2 completed and audited 14/15 preregistered members. The only missing member is `(seed=505,K=12)`. The complete console log ends during epoch-0 validation of that member without a Python traceback, shell `FATAL:` marker, or model/observer assertion. The interruption cause is left unknown.
-
-No replication endpoint is opened from the four complete seed blocks.
-
-### Immediate custody gate
-
-Verifier:
-
-`../verify_real_xm_authority_001_high_k_replication_v2_custody.sh`
+### Custody gate
 
 Frozen verifier commit:
 
 `7a38002e9bb781b9f8e34a12bbfb7a646d9dc5e7`
 
-The verifier performs **no training and no summarization**. It requires the 14 completed members to be byte-identical to the SHA-256 anchors printed by the interrupted v2 run and reruns their structural audits. It also verifies the frozen checkout, execution-bundle files, matched latent cache, and checkpoint-free boundary.
+The later Kaggle session showed `/kaggle/working` effectively empty and failed immediately at `frozen checkout absent`, emitting:
 
-Pass marker:
+`CUSTODY_FAIL_FULL_15_MEMBER_RERUN_REQUIRED`.
 
-`CUSTODY_14_PASS_MISSING_505_K12_RECOVERABLE`
+Therefore the 14 previously completed measurement-bearing artifacts were not available for exact custody recovery. Minimal 14+1 completion is forbidden.
 
-Failure marker:
+## Fresh full rerun — v3 segmented infrastructure
 
-`CUSTODY_FAIL_FULL_15_MEMBER_RERUN_REQUIRED`
+Scientifically required fallback: a complete fresh 15-member replication under the unchanged frozen protocol.
 
-If custody passes, only `(505,12)` may be rerun from scratch, followed by member-15 audit and one invocation of the already-frozen summarizer. If custody fails, the scientifically clean fallback is a complete fresh 15-member v2 campaign.
+Execution note:
+
+`../REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_V3_EXECUTION.md`
+
+Frozen v3 script commit:
+
+`411528744cc1b91cb4d252e7ddafacb87b648038`
+
+V3 changes only execution segmentation: one complete training-seed block per Kaggle invocation, with immediate archive preservation. The same seeds `{101,202,303,404,505}`, matched `K={2,8,12}`, data, model, observer, schedule, checkpoint-free boundary, endpoint, and diagnostics are retained.
+
+Each block launcher invocation records all three K members for one seed and emits `real_xm_authority_001_seed<SEED>_block.tar.gz`. It does not run the five-seed summarizer.
+
+After five preserved block archives exist, the frozen assembly script re-audits all 15 and then invokes the already-frozen summarizer once.
+
+Until that assembly succeeds:
+
+`FULL_15_MEMBER_RERUN_REQUIRED / NO REPLICATION RESULT`.
 
 ## Frozen replication hypothesis and endpoint
 
-High-K authority/competence coupling protocol:
+Protocol:
 
 `../REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION.md`
-
-Fresh seed blocks `{101,202,303,404,505}` with matched `K={2,8,12}`.
 
 Primary endpoint:
 
@@ -94,9 +100,9 @@ Primary directional hypothesis:
 
 `mean_s Delta_s^(12-2) < 0`.
 
-The discovery is frozen as **authority/competence coupling**, not competence-selective routing. Replication does not identify whether competence affects authority, authority affects competence, or a stable latent-region property affects both.
+The discovery is frozen as **authority/competence coupling**, not competence-selective routing. Replication cannot identify whether competence affects authority, authority affects competence, or a stable latent-region property affects both.
 
-Marginal rho dispersion remains calibrated against the exchangeable-winner finite-count null. A secondary frozen diagnostic tracks whether the same region identities repeatedly occupy low-rho/high-Q positions across fresh seeds.
+Marginal rho dispersion remains calibrated against the exchangeable-winner finite-count null. The secondary stable-region diagnostic remains frozen.
 
 ## Claim ceiling
 
@@ -104,4 +110,4 @@ Current real-data evidence is limited to a deterministic 4096-train / 256-valida
 
 The recorded results do **not** establish a universal property of Explorative Modeling, absence of authority topology under other partitions/regimes, a causal effect of low winner authority on competence, or any performance claim.
 
-The fresh-seed replication currently has **no scientific result** because one preregistered member is missing.
+The fresh-seed replication currently has **no scientific result**.
