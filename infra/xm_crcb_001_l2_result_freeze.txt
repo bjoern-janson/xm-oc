@@ -1,0 +1,14 @@
+XM-CRCB-001 L2 RESULT FREEZE
+status=FROZEN_RESULT
+language=L2
+classification=LANGUAGE_FAIL
+endpoint=L2_CALIBRATION_FAIL
+L3_authorized=true
+factorization_authorized=false
+science_authorized=false
+L2_result_sha256=73579a4a5fad030b4f893b64e52fc0ab74a75cca959b133febd218835d43a16f
+L2_custody_manifest_sha256=8c8d2086ed9a2762d573650042ff8ba6e229cd2a02c54588fd61c76509f6b1f4
+L2_result_archive_sha256=70f65a9a377a767768cac11934b09b7e18eecdae634e75e8369f3248650f402a
+L1_predecessor_result_sha256=b111d63df0aa14e4fa6495b4fd9b4f285a295d554f9e43a6c9ec54c41a251bf7
+scientific_meaning=full final_layer did not meet the preregistered repair-adequacy criterion
+claim_ceiling=L2 inadequacy != repair-language insufficiency != H_CRCB evidence != factorization result
