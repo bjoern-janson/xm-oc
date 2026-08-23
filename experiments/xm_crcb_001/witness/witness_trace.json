@@ -1,0 +1,69 @@
+{
+  "claim_ceiling": "witness pass != repair-language adequacy",
+  "classification": "APPARATUS_READY",
+  "kind": "synthetic_witness_trace",
+  "null_path": {
+    "delta_exact_zero": true,
+    "pass": true,
+    "repeat_eval_bitwise_equal": true
+  },
+  "parameter_isolation": {
+    "L1": {
+      "frozen_after": "471a30c8869de1de421c036551fadd4f7e2aa6c239971a37098808e69caf172e",
+      "frozen_before": "471a30c8869de1de421c036551fadd4f7e2aa6c239971a37098808e69caf172e",
+      "frozen_unchanged": true,
+      "noise_seed": 1515879050445059545,
+      "selected_changed": true,
+      "time_seed": 6724253223546557437
+    },
+    "L2": {
+      "frozen_after": "ac45dfcbac0591aad1c2a65f34276517637c88a8dc32571b79f8fc32aa1dcbea",
+      "frozen_before": "ac45dfcbac0591aad1c2a65f34276517637c88a8dc32571b79f8fc32aa1dcbea",
+      "frozen_unchanged": true,
+      "noise_seed": 2692859418240086626,
+      "selected_changed": true,
+      "time_seed": 6021417672001938713
+    },
+    "L3": {
+      "frozen_after": "fb78dc287b92dc7e896c7703c88b091049ce6b3cb30a7d9207ad1d694ae36c2c",
+      "frozen_before": "fb78dc287b92dc7e896c7703c88b091049ce6b3cb30a7d9207ad1d694ae36c2c",
+      "frozen_unchanged": true,
+      "noise_seed": 6778891730172406130,
+      "selected_changed": true,
+      "time_seed": 63879325443124813
+    }
+  },
+  "rng_isolation": {
+    "different_domain_differs": true,
+    "global_torch_rng_unchanged": true,
+    "pass": true,
+    "same_domain_replay_equal": true
+  },
+  "schema": "XM-CRCB-001-CALIBRATION-APPARATUS-v1",
+  "synthetic_stop_rule": {
+    "attempted": [
+      "L1",
+      "L2"
+    ],
+    "fixture": {
+      "L1": "LANGUAGE_FAIL",
+      "L2": "LANGUAGE_PASS",
+      "L3": "MUST_NOT_RUN"
+    },
+    "pass": true,
+    "selected": "L2"
+  },
+  "validation_partition": {
+    "construct": [
+      0,
+      63
+    ],
+    "eval": [
+      64,
+      127
+    ],
+    "max_semantic_index_accessed": 127,
+    "science_region_constructor_calls": 0,
+    "science_reserved_access_count": 0
+  }
+}
