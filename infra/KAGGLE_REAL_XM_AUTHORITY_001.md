@@ -1,6 +1,6 @@
 # Kaggle handoff — REAL-XM-AUTHORITY-001
 
-Current status: **GPU apparatus validated; real-data K=2 pilot and matched K surface recorded/reviewed; fresh-seed high-K coupling replication v2 is incomplete at 14/15 members and scientifically unresolved.**
+Current status: **GPU apparatus validated; real-data K=2 pilot and matched K surface recorded/reviewed; high-K replication v2 incomplete; custody failed because the prior Kaggle working state did not survive; a complete fresh 15-member rerun is required.**
 
 This branch is infrastructure / execution custody only. It does **not** modify or replace draft PR #9.
 
@@ -8,13 +8,16 @@ Frozen scientific/apparatus commit:
 
 `be7cefd60cf199e9fbabd6110be1254a1756590e`
 
-## Completed execution lineage
+## Execution lineage
 
 1. Synthetic CUDA observer smoke: apparatus validated on Tesla P100.
 2. Real ImageNet-subset K=2 pilot: recorded.
 3. Matched real-data K surface `K={1,2,5,8,12}`: recorded/reviewed.
-4. High-K replication attempt 1: infrastructure failure during the first epoch-end `last.ckpt` write for seed 101 / K=2; no preregistered late endpoint or seed-block contrast completed.
-5. High-K replication recovery v2: 14/15 members completed and audited; `(seed=505,K=12)` is missing. The full console log ends during epoch-0 validation of that member without an internal error marker. Cause remains unknown.
+4. High-K replication attempt 1: infrastructure failure during the first epoch-end `last.ckpt` write for seed 101 / K=2.
+5. High-K replication recovery v2: 14/15 members completed and audited; `(seed=505,K=12)` was interrupted during epoch-0 validation without an internal diagnostic.
+6. Custody verification in a later Kaggle session found `/kaggle/working` effectively empty and the frozen checkout absent. Therefore none of the 14 retained measurement artifacts survived into the recovery session. Terminal classification: `CUSTODY_FAIL_FULL_15_MEMBER_RERUN_REQUIRED`.
+
+No partial/four-seed replication endpoint has been opened.
 
 Recorded results / failures:
 
@@ -26,41 +29,43 @@ Recorded results / failures:
 
 Current narrow scientific result remains unchanged: larger K did not demonstrate monotonic growth of a persistent marginal authority topology under the frozen 16-region partition; observed rho dispersion is compatible with the exchangeable-winner finite-count baseline. The high-K negative rho/Q_hold association remains a replication target, not an established mechanism.
 
-## Immediate next gate — custody verification
+## Fresh 15-member fallback — segmented v3 execution
 
-Do **not** open the four-complete-seed result and do not rerun anything yet.
+Scientific protocol and endpoint remain unchanged. V3 is infrastructure-only segmentation so one Kaggle runtime no longer has to survive the entire five-seed campaign.
 
-Run the commit-pinned custody verifier. It performs no training and no summarization. It checks:
+Execution note:
 
-- frozen checkout SHA and cleanliness;
-- exact recovered execution-bundle file hashes;
-- exact matched ImageNet latent-cache hashes;
-- all 14 completed member observer/train-log/member-audit SHA-256 anchors recorded by v2;
-- structural member audits: 2049 authority records, Q_hold at `{512,1024,1536,2048}`, K/batch/replay invariants;
-- absence of checkpoint files;
-- present partial state of `(505,12)` for non-scientific provenance only.
+`infra/REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_V3_EXECUTION.md`
 
-Custody verifier commit:
+Frozen v3 script commit:
 
-`7a38002e9bb781b9f8e34a12bbfb7a646d9dc5e7`
+`411528744cc1b91cb4d252e7ddafacb87b648038`
 
-### One-cell custody check
+Seed-block launcher:
+
+`infra/kaggle_real_xm_authority_001_high_k_replication_v3_seed_block.sh`
+
+Run exactly once for each seed `{101,202,303,404,505}`. Each invocation runs all `K={2,8,12}`, audits the three members, and emits:
+
+`/kaggle/working/real_xm_authority_001_seed<SEED>_block.tar.gz`
+
+**Preserve/download that archive before ending the Kaggle session.** The block launcher never runs the five-seed summarizer.
+
+Example for seed 101:
 
 ```bash
-!curl -fsSL https://raw.githubusercontent.com/bjoern-janson/xm-oc/7a38002e9bb781b9f8e34a12bbfb7a646d9dc5e7/infra/verify_real_xm_authority_001_high_k_replication_v2_custody.sh | bash
+!curl -fsSL https://raw.githubusercontent.com/bjoern-janson/xm-oc/411528744cc1b91cb4d252e7ddafacb87b648038/infra/kaggle_real_xm_authority_001_high_k_replication_v3_seed_block.sh | bash -s -- 101
 ```
 
-Successful terminal marker:
+Repeat only with the preregistered seeds 202, 303, 404, and 505.
 
-`CUSTODY_14_PASS_MISSING_505_K12_RECOVERABLE`
+After all five archives are preserved, place/upload all five into one Kaggle session and run the assembly script from the same frozen commit:
 
-Failure terminal marker:
+```bash
+!curl -fsSL https://raw.githubusercontent.com/bjoern-janson/xm-oc/411528744cc1b91cb4d252e7ddafacb87b648038/infra/kaggle_real_xm_authority_001_high_k_replication_v3_assemble.sh | bash
+```
 
-`CUSTODY_FAIL_FULL_15_MEMBER_RERUN_REQUIRED`
-
-If custody passes, the next authorized recovery is exactly: discard only the incomplete `(505,12)` member after recording its partial hashes/counts, rerun `(505,12)` from scratch under the unchanged v2 protocol, audit it, then run the frozen summarizer once.
-
-If custody fails, minimal recovery is forbidden; the clean fallback is a complete fresh 15-member v2 campaign using launcher `1059bd8e3d307b7718e8f82b9b3057c851e14947`.
+The assembler requires exactly one archive per seed, re-audits all 15 members, checks exact data/execution identities, and only then invokes the already-frozen summarizer once.
 
 ## Frozen replication design
 
@@ -68,11 +73,11 @@ Protocol:
 
 `infra/REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION.md`
 
-Recovered execution bundle:
+Recovered execution bundle used inside every member:
 
 `30cacad1aa73b5b860f5057b5e1bb8b75b4b000f`
 
-Replication design remains unchanged:
+Unchanged design:
 
 - fresh training seed blocks `{101,202,303,404,505}`;
 - matched `K={2,8,12}` inside each block;
@@ -81,6 +86,6 @@ Replication design remains unchanged:
 - primary seed-block contrast: `Z_late(K=12)-Z_late(K=2)`;
 - causal direction explicitly unclaimed;
 - marginal rho dispersion calibrated against the fixed finite-count null;
-- secondary region-identity stability diagnostic frozen before completed fresh-seed replication.
+- secondary region-identity stability diagnostic unchanged.
 
-Status: **V2 INCOMPLETE / CUSTODY VERIFICATION PENDING / NO REPLICATION RESULT**.
+Status: **FULL FRESH 15-MEMBER RERUN REQUIRED / V3 SEGMENTED EXECUTION FROZEN / NO REPLICATION RESULT**.
