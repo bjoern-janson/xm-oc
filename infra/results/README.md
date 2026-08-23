@@ -32,38 +32,76 @@ Narrow result: increasing K did not demonstrate monotonic growth of a persistent
 
 This is a **post-hoc diagnostic**, not preregistered evidence. It calibrates rho dispersion under a region-neutral exchangeable-winner counting null and must not be represented as part of the prospective surface protocol.
 
-## Prospectively frozen next experiment — UNRUN
+## Replication execution lineage — scientifically unresolved
 
-High-K authority/competence coupling fresh-seed replication:
+### Attempt 1
+
+`REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_ATTEMPT1_INFRA_FAILURE.md`
+
+Classification: infrastructure failure during the first epoch-end checkpoint write for seed 101 / K=2. No preregistered late endpoint or complete seed-block contrast existed.
+
+### Recovery v2
+
+`REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_V2_INCOMPLETE.md`
+
+Classification:
+
+`REPLICATION_V2_INCOMPLETE`
+
+Recovery v2 completed and audited 14/15 preregistered members. The only missing member is `(seed=505,K=12)`. The complete console log ends during epoch-0 validation of that member without a Python traceback, shell `FATAL:` marker, or model/observer assertion. The interruption cause is left unknown.
+
+No replication endpoint is opened from the four complete seed blocks.
+
+### Immediate custody gate
+
+Verifier:
+
+`../verify_real_xm_authority_001_high_k_replication_v2_custody.sh`
+
+Frozen verifier commit:
+
+`7a38002e9bb781b9f8e34a12bbfb7a646d9dc5e7`
+
+The verifier performs **no training and no summarization**. It requires the 14 completed members to be byte-identical to the SHA-256 anchors printed by the interrupted v2 run and reruns their structural audits. It also verifies the frozen checkout, execution-bundle files, matched latent cache, and checkpoint-free boundary.
+
+Pass marker:
+
+`CUSTODY_14_PASS_MISSING_505_K12_RECOVERABLE`
+
+Failure marker:
+
+`CUSTODY_FAIL_FULL_15_MEMBER_RERUN_REQUIRED`
+
+If custody passes, only `(505,12)` may be rerun from scratch, followed by member-15 audit and one invocation of the already-frozen summarizer. If custody fails, the scientifically clean fallback is a complete fresh 15-member v2 campaign.
+
+## Frozen replication hypothesis and endpoint
+
+High-K authority/competence coupling protocol:
 
 `../REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION.md`
 
-Immutable execution bundle used by the launcher:
+Fresh seed blocks `{101,202,303,404,505}` with matched `K={2,8,12}`.
 
-`4aa246b5ee80c565d1a8da7d41b4eae083361a2b`
+Primary endpoint:
 
-Immutable Kaggle launcher:
+`Z_late(K,s)` = mean Fisher-z of `corr_R(rho,Q_hold)` at steps 1536 and 2048.
 
-`cc7d88f91be2dc0b739acebcc92896e4466694cc`
+Primary contrast:
 
-Replication units and regimes:
+`Delta_s^(12-2)=Z_late(12,s)-Z_late(2,s)`.
 
-- fresh training seeds `{101,202,303,404,505}`;
-- matched `K={2,8,12}` within every seed block;
-- primary endpoint `Z_late(K,s)` = mean Fisher-z of `corr_R(rho,Q_hold)` at steps 1536 and 2048;
-- primary contrast `Delta_s^(12-2)=Z_late(12,s)-Z_late(2,s)`;
-- primary directional hypothesis `mean_s Delta_s^(12-2) < 0`.
+Primary directional hypothesis:
+
+`mean_s Delta_s^(12-2) < 0`.
 
 The discovery is frozen as **authority/competence coupling**, not competence-selective routing. Replication does not identify whether competence affects authority, authority affects competence, or a stable latent-region property affects both.
 
 Marginal rho dispersion remains calibrated against the exchangeable-winner finite-count null. A secondary frozen diagnostic tracks whether the same region identities repeatedly occupy low-rho/high-Q positions across fresh seeds.
-
-The launcher audits/hashes each native `last.ckpt` and then deletes it post-training to avoid disk pressure across 15 members. Q_gen is out of scope.
-
-Status: **scientifically unrun**. No fresh-seed result exists yet.
 
 ## Claim ceiling
 
 Current real-data evidence is limited to a deterministic 4096-train / 256-validation ImageNet subset, one discovery training seed per K in the recorded surface, Tesla P100 / `16-mixed` precision, the frozen 16-cell coordinate-sign partition, 2049 optimizer steps per K, and Q_hold rather than Q_gen.
 
 The recorded results do **not** establish a universal property of Explorative Modeling, absence of authority topology under other partitions/regimes, a causal effect of low winner authority on competence, or any performance claim.
+
+The fresh-seed replication currently has **no scientific result** because one preregistered member is missing.
