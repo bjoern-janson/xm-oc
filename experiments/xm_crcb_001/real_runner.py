@@ -14,7 +14,7 @@ def load_cache(path):
         x=L[0:128].contiguous(); y=Y[0:128].contiguous().long()
     fh=sha_file(path)
     if fh!=EXPECTED_VAL_LATENT_SHA: raise RuntimeError(f'validation cache hash mismatch: {fh}')
-    return x,y,{'path':str(path),'file_sha256':fh,'semantic_indices_loaded':[0,127],'science_reserved_semantic_access':False,'semantic_sha256':named_hash((('latents_0_127',x),('labels_0_127',y)))}
+    return x,y,{'file':path.name,'file_sha256':fh,'semantic_indices_loaded':[0,127],'science_reserved_semantic_access':False,'semantic_sha256':named_hash((('latents_0_127',x),('labels_0_127',y)))}
 def load_model(ckpt):
     if os.environ.get('XM_AUTHORITY_OBS','0')=='1': raise RuntimeError('XM_AUTHORITY_OBS must be disabled for XM-CRCB-001 calibration')
     from model.model_utils import load_trained_pl_model
@@ -44,7 +44,7 @@ def construct(m,x_cpu,y_cpu,lang,base_seed,target,repair_seed,out):
     de=delta(m,snap)
     if zero_delta(de) or param_hash(m,frozen)!=hf0: raise AssertionError('repair isolation failed')
     dp=Path(out)/f'delta_b{base_seed}_r{target:02d}_s{repair_seed}_{lang}.safetensors'; save_file({k:v.contiguous() for k,v in sorted(de.items())},str(dp)); tp=Path(out)/f'trace_b{base_seed}_r{target:02d}_s{repair_seed}_{lang}.json'; tsh=write_json(tp,tr)
-    return {'base_seed':base_seed,'target_region':target,'repair_seed':repair_seed,'language':lang,'whitelist':wa,'delta_sha256':sha_file(dp),'delta_path':str(dp),'trace_sha256':tsh,'trace_path':str(tp),'frozen_parameter_sha256':hf0,'delta_exact_zero':False}
+    return {'base_seed':base_seed,'target_region':target,'repair_seed':repair_seed,'language':lang,'whitelist':wa,'delta_sha256':sha_file(dp),'delta_file':dp.name,'trace_sha256':tsh,'trace_file':tp.name,'frozen_parameter_sha256':hf0,'delta_exact_zero':False}
 def null_audit(m,x,y,base):
     h0=param_hash(m); l=eval_regions(m,x,y); h1=param_hash(m); rel=[abs(a-b)/max(b,1e-12) for a,b in zip(l,base)]; return {'parameter_hash_before':h0,'parameter_hash_after':h1,'max_relative_loss_difference':max(rel),'null_audit_pass':h0==h1 and max(rel)<=1e-5,'delta_exact_zero':h0==h1}
 def validate_base_manifest(path,base_seed,ckpt):
@@ -66,10 +66,10 @@ def run_language(lang,ck606,ck707,manifest606,manifest707,cache,priors,out):
             for rs in CAL_REPAIR_SEEDS:
                 restore(m,snap)
                 if param_hash(m)!=hbase: raise AssertionError('base restore failed')
-                row=construct(m,xc,yc,lang,bs,r,rs,out); rl=eval_regions(m,xe,ye); row.update(metrics(base,rl,r)); row['repaired_losses']=rl; reps.append(row); artifacts += [Path(row['delta_path']),Path(row['trace_path'])]
+                row=construct(m,xc,yc,lang,bs,r,rs,out); rl=eval_regions(m,xe,ye); row.update(metrics(base,rl,r)); row['repaired_losses']=rl; reps.append(row); artifacts += [out/row['delta_file'],out/row['trace_file']]
             g=repeat(reps); g.update({'base_seed':bs,'target_region':r,'language':lang,'replicates':reps}); bg.append(g); groups.append(g)
         restore(m,snap)
         if param_hash(m)!=hbase: raise AssertionError('final base restore failed')
-        bases.append({'base_seed':bs,'checkpoint':str(checkpoints[bs]),'checkpoint_sha256':sha_file(checkpoints[bs]),'base_manifest':manifests[bs],'base_parameter_sha256':hbase,'whitelist':wa,'base_losses':base,'null_audit':nu,'groups':bg})
+        bases.append({'base_seed':bs,'checkpoint_file':checkpoints[bs].name,'checkpoint_sha256':sha_file(checkpoints[bs]),'base_manifest_file':Path(manifest606 if bs==606 else manifest707).name,'base_manifest_sha256':sha_file(manifest606 if bs==606 else manifest707),'base_parameter_sha256':hbase,'whitelist':wa,'base_losses':base,'null_audit':nu,'groups':bg})
         del m; torch.cuda.empty_cache()
-    custody=all(p.exists() and p.stat().st_size for p in artifacts); dec=decision(groups,nullok,custody); result={'schema':SCHEMA,'kind':'real_calibration_language_result','source_scientific_sha':SOURCE_SHA,'cc_protocol_commit':CC_PROTOCOL,'language':lang,'prior_results':list(priors),'prior_classifications':[x['decision']['classification'] for x in prior],'cache':cm,'base_results':bases,'decision':dec,'science_reserved_semantic_access':False,'factorization_constructed':False,'authority_metrics_read':False,'calibration_only':True}; rp=out/f'calibration_{lang}_result.json'; rsh=write_json(rp,result); mp=out/'custody_manifest.json'; write_json(mp,{'result':{'path':str(rp),'sha256':rsh},'artifacts':[{'path':str(p),'sha256':sha_file(p),'bytes':p.stat().st_size} for p in sorted(artifacts)]}); print(json.dumps({'classification':dec['classification'],'language':lang,'result':str(rp),'sha256':rsh},sort_keys=True)); return 0
+    custody=all(p.exists() and p.stat().st_size for p in artifacts); dec=decision(groups,nullok,custody); result={'schema':SCHEMA,'kind':'real_calibration_language_result','source_scientific_sha':SOURCE_SHA,'cc_protocol_commit':CC_PROTOCOL,'language':lang,'prior_results':[{'file':Path(p).name,'sha256':sha_file(p),'classification':x['decision']['classification']} for p,x in zip(priors,prior)],'cache':cm,'base_results':bases,'decision':dec,'science_reserved_semantic_access':False,'factorization_constructed':False,'authority_metrics_read':False,'calibration_only':True}; rp=out/f'calibration_{lang}_result.json'; rsh=write_json(rp,result); mp=out/'custody_manifest.json'; write_json(mp,{'result':{'file':rp.name,'sha256':rsh},'artifacts':[{'file':p.name,'sha256':sha_file(p),'bytes':p.stat().st_size} for p in sorted(artifacts)]}); print(json.dumps({'classification':dec['classification'],'language':lang,'result':str(rp),'sha256':rsh},sort_keys=True)); return 0
