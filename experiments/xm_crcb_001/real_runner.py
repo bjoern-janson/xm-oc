@@ -28,9 +28,9 @@ def losses(m,x,y,t,z,grad):
 def eval_regions(m,x_cpu,y_cpu):
     d=next(m.parameters()).device; dt=next(m.diffusion_transformer.parameters()).dtype; out=[]
     for r in range(16):
-        vals=[]
+        vals=[]; ns=seed(CAL_EVAL_SEED,'eval-noise',r); ts=seed(CAL_EVAL_SEED,'eval-time',r); zall=noise(x_cpu.shape,r,ns,d,dt); tall=times(len(x_cpu),ts,d)
         for lo in range(0,len(x_cpu),BATCH):
-            x=x_cpu[lo:lo+BATCH].to(d,dtype=dt); y=y_cpu[lo:lo+BATCH].to(d); ns=seed(CAL_EVAL_SEED,'eval-noise',r); ts=seed(CAL_EVAL_SEED,'eval-time',r); zall=noise(x_cpu.shape,r,ns,d,dt); tall=times(len(x_cpu),ts,d); z=zall[lo:lo+BATCH]; t=tall[lo:lo+BATCH]; vals.append(losses(m,x,y,t,z,False).detach().cpu())
+            x=x_cpu[lo:lo+BATCH].to(d,dtype=dt); y=y_cpu[lo:lo+BATCH].to(d); z=zall[lo:lo+BATCH]; t=tall[lo:lo+BATCH]; vals.append(losses(m,x,y,t,z,False).detach().cpu())
         out.append(float(torch.cat(vals).mean()))
     return out
 def construct(m,x_cpu,y_cpu,lang,base_seed,target,repair_seed,out):
