@@ -54,4 +54,9 @@ def once():
 def run(out):
     out=Path(out); out.mkdir(parents=True,exist_ok=False); a=once(); b=once()
     if cjson(a)!=cjson(b): raise AssertionError('witness not reproducible')
-    r=dict(a); r['witness_rerun_bitwise_json_equal']=True; r['witness_payload_sha256']=sha_bytes(cjson(a)); rp=out/'witness_result.json'; rh=write_json(rp,r); mp=out/'witness_custody_manifest.json'; mh=write_json(mp,{'schema':SCHEMA,'kind':'witness_custody_manifest','result_file':rp.name,'result_sha256':rh,'result_bytes':rp.stat().st_size,'classification':'APPARATUS_READY','claim_ceiling':'witness pass != repair-language adequacy'}); print(json.dumps({'classification':'APPARATUS_READY','result_sha256':rh,'manifest_sha256':mh,'witness_payload_sha256':r['witness_payload_sha256']},sort_keys=True)); return 0
+    r=dict(a); r['witness_rerun_bitwise_json_equal']=True; r['witness_payload_sha256']=sha_bytes(cjson(a))
+    trace={'schema':SCHEMA,'kind':'synthetic_witness_trace','parameter_isolation':r['parameter_isolation'],'rng_isolation':r['rng_isolation'],'validation_partition':r['validation_partition'],'synthetic_stop_rule':r['synthetic_stop_rule'],'null_path':r['null_path'],'classification':'APPARATUS_READY','claim_ceiling':'witness pass != repair-language adequacy'}
+    tp=out/'witness_trace.json'; th=write_json(tp,trace)
+    rp=out/'witness_result.json'; rh=write_json(rp,r)
+    mp=out/'witness_custody_manifest.json'; mh=write_json(mp,{'schema':SCHEMA,'kind':'witness_custody_manifest','result_file':rp.name,'result_sha256':rh,'result_bytes':rp.stat().st_size,'trace_file':tp.name,'trace_sha256':th,'trace_bytes':tp.stat().st_size,'classification':'APPARATUS_READY','claim_ceiling':'witness pass != repair-language adequacy'})
+    print(json.dumps({'classification':'APPARATUS_READY','result_sha256':rh,'trace_sha256':th,'manifest_sha256':mh,'witness_payload_sha256':r['witness_payload_sha256']},sort_keys=True)); return 0
