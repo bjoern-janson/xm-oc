@@ -1,8 +1,12 @@
 # REAL-XM-AUTHORITY-001 — high-K authority/competence coupling replication
 
-Status: **PROSPECTIVE / UNRUN AFTER INFRASTRUCTURE RECOVERY**.
+Status: **PROSPECTIVE ENDPOINT FROZEN / V2 EXECUTION INCOMPLETE / SCIENTIFICALLY UNRESOLVED**.
 
 Attempt 1 is preserved in `infra/results/REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_ATTEMPT1_INFRA_FAILURE.md`. It failed during the first epoch-end checkpoint write for seed 101 / K=2, before any preregistered late endpoint or seed-block contrast was available. No result from that attempt is replication evidence.
+
+Recovery v2 is preserved in `infra/results/REAL_XM_AUTHORITY_001_HIGH_K_REPLICATION_V2_INCOMPLETE.md`. It completed and audited 14/15 preregistered members; only `(seed=505,K=12)` is missing. The full console log terminates during epoch-0 validation of that member with no Python traceback, shell `FATAL:` marker, or model/observer assertion. The interruption cause is therefore unknown. No confirmatory result is opened from the four complete seed blocks.
+
+Immediate gate: run `infra/verify_real_xm_authority_001_high_k_replication_v2_custody.sh`. Minimal recovery is authorized only if all 14 retained members are byte-identical to their recorded custody hashes and pass structural re-audit. If custody fails, the clean fallback is a complete fresh 15-member v2 campaign.
 
 This protocol follows the recorded matched K surface in `infra/results/REAL_XM_AUTHORITY_001_K_SURFACE_RESULT.md`. It does not modify the frozen observer, region definition, training objective, or PR #9.
 
