@@ -1,9 +1,0 @@
-{
-  "claim_ceiling": "witness pass != repair-language adequacy",
-  "classification": "APPARATUS_READY",
-  "kind": "witness_custody_manifest",
-  "result_bytes": 3875,
-  "result_file": "witness_result.json",
-  "result_sha256": "0140e8d77be8e19a4b3ac691a58ce96459643cccdcda62cbaae77e1f282c3714",
-  "schema": "XM-CRCB-001-CALIBRATION-APPARATUS-v1"
-}
